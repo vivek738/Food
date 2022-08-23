@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:esewa_pnp/esewa.dart';
+import 'package:esewa_pnp/esewa_pnp.dart';
 
 class AddToCart extends StatefulWidget {
   const AddToCart({Key? key}) : super(key: key);
@@ -38,6 +40,9 @@ class _AddToCartState extends State<AddToCart> {
     return d;
   }
 
+  ESewaPnp? _esewaPnp;
+  ESewaConfiguration? _configuration;
+  @override
   void initState() {
     super.initState();
     card().then((res) {
@@ -45,8 +50,15 @@ class _AddToCartState extends State<AddToCart> {
         return res;
       });
     });
+    _configuration = ESewaConfiguration(
+      clientID: "JB0BBQ4aD0UqIThFJwAKBgAXEUkEGQUBBAwdOgABHD4DChwUAB0R",
+      secretKey: "BhwIWQQADhIYSxILExMcAgFXFhcOBwAKBgAXEQ==",
+      environment: ESewaConfiguration.ENVIRONMENT_TEST,
+    );
+    _esewaPnp = ESewaPnp(configuration: _configuration!);
   }
 
+  double _amount = 100;
   @override
   Widget build(BuildContext context) {
     setState(() {});
@@ -143,6 +155,24 @@ class _AddToCartState extends State<AddToCart> {
                                       ),
                                     ],
                                   ),
+                                  ESewaPaymentButton(
+                                    this._esewaPnp!,
+                                    amount: _amount,
+                                    callBackURL: "https://example.com",
+                                    productId: "abc123",
+                                    productName: "Flutter SDK Example",
+                                    onSuccess: (result) {
+                                       Navigator.pushNamed(context, '/dish');
+                                     print('success');
+                                    },
+                                    onFailure: (e) {
+                                      print('failed');
+                                    },
+                                  ),
+                                  SizedBox(
+                                    height: 84,
+                                  ),
+                                  
                                 ],
                               ),
                             ),
